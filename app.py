@@ -649,8 +649,8 @@ if selected == list(menu_options.keys())[0]:  # "오늘의 학습"
                     save_data()
 
                     st.success("잘 하셨습니다! 🎉")
-                    # 풍선 대신 눈 이펙트 사용 (더 작아 글자 가림이 덜 함)
-                    st.snow()
+                    # 작은 풍선 하나만 표시
+                    st.balloons()
 
 # 통계 페이지
 elif selected == list(menu_options.keys())[1]:  # "통계"
@@ -767,11 +767,9 @@ elif selected == list(menu_options.keys())[2]:  # "상품 시스템"
         st.warning("상품 시스템을 확인하려면 로그인이 필요합니다.")
     else:
         rewards = {
-            10: "귀여운 메모지 세트",
-            15: "프리미엄 노트",
-            20: "스터디 플래너",
-            25: "고급 만년필 세트",
-            30: "프리미엄 학습 키트"
+            10: "메모지 세트",
+            20: "휴대용 수첩",
+            30: "프리미엄 노트"
         }
         
         for count, reward in rewards.items():
@@ -781,7 +779,7 @@ elif selected == list(menu_options.keys())[2]:  # "상품 시스템"
             
             st.markdown(f"""
             <div class="{container_class}">
-                <h3>{count}회 완료 - {reward}</h3>
+                <h3>{count}일 완료 - {reward}</h3>
                 <p>{status_text}</p>
             </div>
             """, unsafe_allow_html=True)
@@ -794,7 +792,7 @@ elif selected == list(menu_options.keys())[2]:  # "상품 시스템"
         )
         if next_reward:
             remaining = next_reward - current_completions
-            st.info(f"다음 상품까지 {remaining}회 남았습니다! 화이팅! 💪")
+            st.info(f"다음 상품까지 {remaining}일 남았습니다! 화이팅! 💪")
 
 # 관리자 대시보드 페이지
 elif selected == "관리자 대시보드" and st.session_state.admin_mode:
