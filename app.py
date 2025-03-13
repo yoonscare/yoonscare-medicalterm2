@@ -641,6 +641,10 @@ if selected == list(menu_options.keys())[0]:  # "오늘의 학습"
                     # 학생 진도 업데이트
                     student_id = st.session_state.current_student
                     if student_id:
+                        # student_id가 student_progress에 없는 경우 초기화
+                        if student_id not in st.session_state.student_progress:
+                            st.session_state.student_progress[student_id] = {}
+                        # date_key가 해당 학생의 progress에 없는 경우 초기화
                         if date_key not in st.session_state.student_progress[student_id]:
                             st.session_state.student_progress[student_id][date_key] = 0
                         st.session_state.student_progress[student_id][date_key] += 1
@@ -772,8 +776,16 @@ elif selected == list(menu_options.keys())[2]:  # "상품 시스템"
             30: "프리미엄 노트"
         }
         
+        # 학생이 학습한 일수 계산 (student_progress에서 날짜 수 계산)
+        student_id = st.session_state.current_student
+        completed_days = 0
+        if student_id in st.session_state.student_progress:
+            # 학습 기록이 있는 날짜 수 계산
+            completed_days = len(st.session_state.student_progress[student_id])
+        
         for count, reward in rewards.items():
-            achieved = st.session_state.monthly_completions >= count
+            # 학습한 일수를 기준으로 상품 획득 여부 판단
+            achieved = completed_days >= count
             container_class = "stats-card" if achieved else "term-card"
             status_text = "획득 완료! 🎉" if achieved else "아직 획득하지 못했습니다"
             
@@ -784,15 +796,14 @@ elif selected == list(menu_options.keys())[2]:  # "상품 시스템"
             </div>
             """, unsafe_allow_html=True)
 
-        # 현재 달성 현황
-        current_completions = st.session_state.monthly_completions
+        # 현재 달성 현황 (학습한 일수 기준)
         next_reward = next(
-            (count for count in sorted(rewards.keys()) if count > current_completions),
+            (count for count in sorted(rewards.keys()) if count > completed_days),
             None
         )
         if next_reward:
-            remaining = next_reward - current_completions
-            st.info(f"다음 상품까지 {remaining}일 남았습니다! 화이팅! 💪")
+            remaining = next_reward - completed_days
+            st.info(f"다음 상품까지 {remaining}일 더 학습해야 합니다! 화이팅! 💪")
 
 # 관리자 대시보드 페이지
 elif selected == "관리자 대시보드" and st.session_state.admin_mode:
